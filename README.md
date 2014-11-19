@@ -8,7 +8,7 @@ It is a very simple server that makes a few MIFARE Classic operations, implement
 Written in Java, using the [Spark framework](http://sparkjava.com/) and built using Maven and IntelliJ Idea IDE.
 
 To build from the command line:
-```mvn build```
+```mvn install```
 
 To deploy in Heroku:
 ```git push heroku master```
