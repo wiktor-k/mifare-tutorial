@@ -1,0 +1,8 @@
+*.class
+*.log
+
+# builds
+target/
+
+# IDE
+.idea/
