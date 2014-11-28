@@ -1,7 +1,7 @@
 mifare-tutorial
 ===============
 
-Example Service Provider for the MIFARE Classic tutorial in Fidesmo Developer Portal [to be linked when the tutorial page is published].
+Example Service Provider for the [MIFARE Classic tutorial](https://developer.fidesmo.com/tutorials/mifare-classic) in Fidesmo Developer Portal.
 
 It is a very simple server that makes a few MIFARE Classic operations, implementing a counter (of invocations to Ctulhu, a somewhat unsettling pet). It implements two services:
 
@@ -24,12 +24,13 @@ About the code
 --------------
 Written in Java, using the [Spark framework](http://sparkjava.com/) and built using Maven and IntelliJ Idea IDE.
 
-Before building, you need to define the app credentials (assigned to your application in [Fidesmo Developer Portal](https://developer.fidesmo.com/)) as environment variables.
+Before building, you need to define the app credentials (assigned to your application in [Fidesmo Developer Portal](https://developer.fidesmo.com/)) and the root URL where your app is running as environment variables.
 
 To build from the command line:
 ```
 export INVOKE_APPID = "xxxxxxxx"
 export INVOKE_APPKEYS = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+export INVOKE_ROOT_URL = "http://your-chosen-url"
 mvn install
 ```
 
@@ -37,5 +38,6 @@ To deploy in Heroku, defining the same environment variables as well:
 ```
 heroku config:set INVOKE_APPID=xxxxxxxx
 heroku config:set INVOKE_APPKEYS=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+heroku config:set INVOKE_ROOT_URL=http://xxxxx.herokuapp.com
 git push heroku master```
 
