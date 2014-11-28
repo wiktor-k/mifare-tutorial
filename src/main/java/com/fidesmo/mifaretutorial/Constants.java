@@ -8,7 +8,7 @@ public class Constants {
     public static String deleteServiceId = "delete";
 
     // Callback endpoints
-    public static String rootUrl ="http://mifare-tutorial.herokuapp.com";
+    public static String rootUrl = System.getenv().get("INVOKE_ROOT_URL");
     public static String getCardCallbackUrl = "/gotcard";
     public static String initializeCallbackUrl = "/initialized";
     public static String readBlockCallbackUrl = "/readblock";
