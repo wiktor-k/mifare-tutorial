@@ -25,7 +25,7 @@ public class MifareRobot {
         JSONObject payload = new JSONObject();
         payload.put("sectors", 4);
 
-        return sendOperationAndProcessResponse(url, "PUT", callbackUrl, payload, sessionId, pendingOperations);
+        return sendOperationAndProcessResponse(url, callbackUrl, payload, sessionId, pendingOperations);
     }
 
     // Initialize the first sector of our virtual MIFARE card
@@ -40,7 +40,7 @@ public class MifareRobot {
         payload.put("trailers", trailerData);
         payload.put("overwriteInvalidAccessBits", true);
 
-        return sendOperationAndProcessResponse(url, "PUT", callbackUrl, payload, sessionId, pendingOperations);
+        return sendOperationAndProcessResponse(url, callbackUrl, payload, sessionId, pendingOperations);
     }
 
     // Read block 1 of sector 1 of the virtual MIFARE card
@@ -54,7 +54,7 @@ public class MifareRobot {
         blockData.add(Utils.encodeBlockToRead(1, 1));
         payload.put("blocks", blockData);
 
-        return sendOperationAndProcessResponse(url, "PUT", callbackUrl, payload, sessionId, pendingOperations);
+        return sendOperationAndProcessResponse(url, callbackUrl, payload, sessionId, pendingOperations);
     }
 
     // Write a hex-encoded value into block 1 of sector 1 of the virtual MIFARE card
@@ -67,7 +67,7 @@ public class MifareRobot {
         payload.put("blocks", blockData);
         payload.put("checksum", checksum);
 
-        return sendOperationAndProcessResponse(url, "PUT", callbackUrl, payload, sessionId, pendingOperations);
+        return sendOperationAndProcessResponse(url, callbackUrl, payload, sessionId, pendingOperations);
     }
 
     // Deletes the virtual MIFARE card
@@ -75,7 +75,7 @@ public class MifareRobot {
         String url = "https://api.fidesmo.com/mifare/delete";
         String callbackUrl = Constants.rootUrl + Constants.deleteCardCallbackUrl;
 
-        return sendOperationAndProcessResponse(url, "PUT", callbackUrl, null, sessionId, pendingOperations);
+        return sendOperationAndProcessResponse(url, callbackUrl, null, sessionId, pendingOperations);
     }
 
     // Sends the message finalizing the delivery process
@@ -97,19 +97,19 @@ public class MifareRobot {
             payload.put("message", "CTULHU IS VERY ANGRY.\nYour invocation failed.");
         }
 
-        sendOperationAndProcessResponse(url, "POST", null, payload, sessionId, null);
+        sendOperationAndProcessResponse(url, null, payload, sessionId, null);
     }
 
     // Creates a connection with the common headers used in all Fidesmo API operations,
     // adds the message payload if necessary and process the response.
     // If successful, extracts the operation ID from a response and inserts it into the map of pending operations
     // Returns the HTTP Response Code
-    public int sendOperationAndProcessResponse(String url, String method, String callbackUrl, JSONObject payload, String sessionId, HashMap<String, String> pendingOperations) {
+    public int sendOperationAndProcessResponse(String url, String callbackUrl, JSONObject payload, String sessionId, HashMap<String, String> pendingOperations) {
         int responseCode = 0;
         try {
             // prepare the operation request
             HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-            connection.setRequestMethod(method);
+            connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setRequestProperty("sessionId", sessionId);
             connection.setRequestProperty("app_id", Constants.applicationId);
