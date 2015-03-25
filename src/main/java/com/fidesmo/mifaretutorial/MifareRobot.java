@@ -36,7 +36,9 @@ public class MifareRobot {
         // Encode the JSON structure with the trailer data for one sector
         JSONObject payload = new JSONObject();
         JSONArray trailerData = new JSONArray();
-        trailerData.add(Utils.encodeSectorTrailer(1, Constants.keyA, Constants.keyB, Constants.accessBits));
+        for(int i = 0; i < 4;i++) {
+            trailerData.add(Utils.encodeSectorTrailer(i, Constants.keyA, Constants.keyB, Constants.accessBits));
+        }
         payload.put("trailers", trailerData);
         payload.put("overwriteInvalidAccessBits", true);
 
