@@ -60,14 +60,13 @@ public class MifareRobot {
     }
 
     // Write a hex-encoded value into block 1 of sector 1 of the virtual MIFARE card
-    public int writeCounterInCard(long counter, String checksum, String sessionId, HashMap<String, String> pendingOperations) {
+    public int writeCounterInCard(long counter, String sessionId, HashMap<String, String> pendingOperations) {
         String url = "https://api.fidesmo.com/mifare/write";
         String callbackUrl = Constants.rootUrl + Constants.writeBlockCallbackUrl;
         JSONObject payload = new JSONObject();
         JSONArray blockData = new JSONArray();
         blockData.add(Utils.encodeIntInBlock(counter, 1, 1));
         payload.put("blocks", blockData);
-        payload.put("checksum", checksum);
 
         return sendOperationAndProcessResponse(url, callbackUrl, payload, sessionId, pendingOperations);
     }
