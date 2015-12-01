@@ -169,18 +169,16 @@ public class MifareSP {
                 } else {
                     // parse the counter value from the read block, increment
                     // unless it is the first time the card is used, then initialize to one
-                    // store counter and checksum in the session state map
+                    // store counter the session state map
                     JSONArray blocks = (JSONArray) jsonParameters.get("blocks");
                     long counter = Utils.decodeCounter(blocks);
                     sessionMap.get(sessionId).setCounter(counter);
-                    String checksum = (String) jsonParameters.get("checksum");
-                    sessionMap.get(sessionId).setChecksum(checksum);
                     if (sessionMap.get(sessionId).isFirstTime()) {
                         sessionMap.get(sessionId).setCounter(1);
-                        if (cardClient.writeCounterInCard(1, checksum, sessionId, pendingOperations) != HTTP_OK) handleFailure(sessionId);
+                        if (cardClient.writeCounterInCard(1, sessionId, pendingOperations) != HTTP_OK) handleFailure(sessionId);
                     } else {
                         counter ++;
-                        if (cardClient.writeCounterInCard(counter, checksum, sessionId, pendingOperations) != HTTP_OK) handleFailure(sessionId);
+                        if (cardClient.writeCounterInCard(counter, sessionId, pendingOperations) != HTTP_OK) handleFailure(sessionId);
                     }
                 }
                 response.status(HTTP_OK);

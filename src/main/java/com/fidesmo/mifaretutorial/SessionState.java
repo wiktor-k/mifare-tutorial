@@ -5,22 +5,12 @@ package com.fidesmo.mifaretutorial;
  * set of variables that keep the session's state
  */
 public class SessionState {
-    private String checksum;
     private long counter;
     private boolean firstTime;
 
     public SessionState() {
-        checksum = "";
         counter = 0;
         firstTime = false;
-    }
-
-    public String getChecksum() {
-        return checksum;
-    }
-
-    public void setChecksum(String checksum) {
-        this.checksum = checksum;
     }
 
     public long getCounter() {
