@@ -3,6 +3,8 @@ package com.fidesmo.mifaretutorial;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,9 +20,12 @@ import java.util.HashMap;
  */
 public class MifareRobot {
 
+    protected static Logger log = LoggerFactory.getLogger(MifareRobot.class);
+
     // Sends a Get MIFARE Card request
     public int getCard(String sessionId, HashMap<String, String> pendingOperations) {
-        String url = "https://api.fidesmo.com/mifare/get";
+        log.info("Getting card - sessionId: " + sessionId);
+        String url = Constants.fidesmoBackendUrl + "/mifare/get";
         String callbackUrl = Constants.rootUrl + Constants.getCardCallbackUrl;
         JSONObject payload = new JSONObject();
         payload.put("sectors", 4);
@@ -30,7 +35,8 @@ public class MifareRobot {
 
     // Initialize the first sector of our virtual MIFARE card
     public int initializeCard(String sessionId, HashMap<String, String> pendingOperations) {
-        String url = "https://api.fidesmo.com/mifare/initialize";
+        log.info("Initializing card - sessionId: " + sessionId);
+        String url = Constants.fidesmoBackendUrl + "/mifare/initialize";
         String callbackUrl = Constants.rootUrl + Constants.initializeCallbackUrl;
 
         // Encode the JSON structure with the trailer data for one sector
@@ -47,7 +53,8 @@ public class MifareRobot {
 
     // Read block 1 of sector 1 of the virtual MIFARE card
     public int readBlock(String sessionId, HashMap<String, String> pendingOperations) {
-        String url = "https://api.fidesmo.com/mifare/read";
+        log.info("Reading block - sessionId: " + sessionId);
+        String url = Constants.fidesmoBackendUrl + "/mifare/read";
         String callbackUrl = Constants.rootUrl + Constants.readBlockCallbackUrl;
 
         // Encode the JSON structure with the trailer data for one sector
@@ -61,7 +68,8 @@ public class MifareRobot {
 
     // Write a hex-encoded value into block 1 of sector 1 of the virtual MIFARE card
     public int writeCounterInCard(long counter, String sessionId, HashMap<String, String> pendingOperations) {
-        String url = "https://api.fidesmo.com/mifare/write";
+        log.info("Writing counter " + counter + " in card - sessionId: " + sessionId);
+        String url = Constants.fidesmoBackendUrl + "/mifare/write";
         String callbackUrl = Constants.rootUrl + Constants.writeBlockCallbackUrl;
         JSONObject payload = new JSONObject();
         JSONArray blockData = new JSONArray();
@@ -73,7 +81,8 @@ public class MifareRobot {
 
     // Deletes the virtual MIFARE card
     public int deleteCard(String sessionId, HashMap<String, String> pendingOperations) {
-        String url = "https://api.fidesmo.com/mifare/delete";
+        log.info("Deleting card - sessionId: " + sessionId);
+        String url = Constants.fidesmoBackendUrl + "/mifare/delete";
         String callbackUrl = Constants.rootUrl + Constants.deleteCardCallbackUrl;
 
         return sendOperationAndProcessResponse(url, callbackUrl, null, sessionId, pendingOperations);
@@ -81,7 +90,7 @@ public class MifareRobot {
 
     // Sends the message finalizing the delivery process
     public void serviceDeliveryCompleted(boolean successful, long counter, String sessionId) {
-        String url = "https://api.fidesmo.com/service/completed";
+        String url = Constants.fidesmoBackendUrl + "/service/completed";
 
         JSONObject payload = new JSONObject();
         // output different messages depending on the delivery's success or failure
@@ -128,8 +137,23 @@ public class MifareRobot {
                 osw.close();
             }
 
+            log.info("Sent request to url '" + url + "':" + "\n" +
+                    connection.getRequestMethod() + "\n" +
+                    "sessionId: " + sessionId + "\n" +
+                    "app_id: " + Constants.applicationId + "\n" +
+                    "app_key: " + Constants.applicationKeys + "\n" +
+                    (callbackUrl != null ?
+                        "callbackUrl: " + callbackUrl + "\n" : "") +
+                    (payload != null ?
+                        "Content-Type: application/json\n\n" +
+                        payload.toJSONString() : "")
+            );
+
             // send it and process the response
             responseCode = connection.getResponseCode();
+
+            log.info("Response code: " + responseCode);
+
             if (responseCode != HttpURLConnection.HTTP_OK) return responseCode;
 
             // we need to extract the operationId if the "pendingOperations" map is provided
