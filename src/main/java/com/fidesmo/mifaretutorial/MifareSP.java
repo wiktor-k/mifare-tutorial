@@ -2,6 +2,8 @@ package com.fidesmo.mifaretutorial;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -12,6 +14,8 @@ import static java.net.HttpURLConnection.*;
 import static spark.Spark.*;
 
 public class MifareSP {
+
+    private static Logger log = LoggerFactory.getLogger(MifareSP.class);
 
     // Session state is kept in this Map
     private static HashMap<String, SessionState> sessionMap = new HashMap<>();
@@ -36,7 +40,7 @@ public class MifareSP {
         get(new Route("/") {
             @Override
             public Object handle(Request request, Response response) {
-                System.out.println("GET detected on root");
+                log.info("GET detected on root");
                 return "<h2>Welcome to the MIFARE tutorial Service Provider</h2>";
             }
         });
@@ -48,7 +52,7 @@ public class MifareSP {
             @Override
             public Object handle(Request request, Response response) {
                 String serviceId = request.params("serviceId");
-                System.out.println("DESCRIBE endpoint - ServiceID: " + serviceId);
+                log.info("DESCRIBE endpoint - ServiceID: " + serviceId);
                 JSONObject description = new JSONObject();
 
                 // verify the serviceId
@@ -73,7 +77,7 @@ public class MifareSP {
             public Object handle(Request request, Response response) {
                 JSONObject jsonParameters = (JSONObject) JSONValue.parse(request.body());
                 String serviceId = (String) jsonParameters.get("serviceId");
-                System.out.println("DELIVER endpoint - ServiceID: " + serviceId);
+                log.info("DELIVER endpoint - ServiceID: " + serviceId);
 
                 // verify the serviceId
                 if (!serviceId.equals(Constants.invokeServiceId) && !serviceId.equals(Constants.deleteServiceId)) {
@@ -107,7 +111,7 @@ public class MifareSP {
 
                 // retrieve the sessionId using the operationId
                 String sessionId = pendingOperations.get(operationId);
-                System.out.println("GOT CARD endpoint - stored sessionID: " + sessionId);
+                log.info("GOT CARD endpoint - stored sessionID: " + sessionId);
                 // remove operationId from the map
                 pendingOperations.remove(operationId);
 
@@ -137,7 +141,7 @@ public class MifareSP {
                 JSONObject jsonParameters = (JSONObject) JSONValue.parse(request.body());
                 String operationId = (String) jsonParameters.get("operationId");
                 String sessionId = pendingOperations.get(operationId);
-                System.out.println("CARD INITIALIZED endpoint - stored sessionID: " + sessionId);
+                log.info("CARD INITIALIZED endpoint - stored sessionID: " + sessionId);
                 pendingOperations.remove(operationId);
 
                 int statusCode = ((Long)jsonParameters.get("statusCode")).intValue();
@@ -161,7 +165,7 @@ public class MifareSP {
                 String operationId = (String) jsonParameters.get("operationId");
                 String sessionId = pendingOperations.get(operationId);
                 pendingOperations.remove(operationId);
-                System.out.println("BLOCK READ endpoint - sessionID: " + sessionId);
+                log.info("BLOCK READ endpoint - sessionID: " + sessionId);
                 int statusCode = ((Long)jsonParameters.get("statusCode")).intValue();
                 if (statusCode != HTTP_OK)
                 {
@@ -194,7 +198,7 @@ public class MifareSP {
                 String operationId = (String) jsonParameters.get("operationId");
                 String sessionId = pendingOperations.get(operationId);
                 pendingOperations.remove(operationId);
-                System.out.println("BLOCK WRITE endpoint - sessionID: " + sessionId);
+                log.info("BLOCK WRITE endpoint - sessionID: " + sessionId);
                 int statusCode = ((Long)jsonParameters.get("statusCode")).intValue();
                 if (statusCode != HTTP_OK)
                 {
@@ -218,7 +222,7 @@ public class MifareSP {
                 String operationId = (String) jsonParameters.get("operationId");
                 String sessionId = pendingOperations.get(operationId);
                 pendingOperations.remove(operationId);
-                System.out.println("DELETE CARD endpoint - sessionID: " + sessionId);
+                log.info("DELETE CARD endpoint - sessionID: " + sessionId);
                 int statusCode = ((Long)jsonParameters.get("statusCode")).intValue();
                 if (statusCode != HTTP_OK)
                 {
@@ -237,6 +241,7 @@ public class MifareSP {
     // If any operation failed, report a failed service delivery to the user
     static void handleFailure(String sessionId) {
         // Remove this session's entry, if it exists
+        log.error("Error in sessionID: " + sessionId);
         sessionMap.remove(sessionId);
         cardClient.serviceDeliveryCompleted(false, 0, sessionId);
     }

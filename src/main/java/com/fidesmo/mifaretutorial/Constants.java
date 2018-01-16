@@ -24,4 +24,7 @@ public class Constants {
     public static String keyA = "AAAAAAAAAAAA";
     public static String keyB = "BBBBBBBBBBBB";
     public static String accessBits = "F87F0000";
+
+    // Fidesmo's backend URL
+    public static String fidesmoBackendUrl = "https://api.fidesmo.com";
 }
