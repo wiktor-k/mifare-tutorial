@@ -27,10 +27,9 @@ public class MifareSP {
     public static void main(String[] args) {
 
         //Heroku assigns different port each time, hence reading it from process.
-        ProcessBuilder process = new ProcessBuilder();
         Integer port;
-        if (process.environment().get("PORT") != null) {
-            port = Integer.parseInt(process.environment().get("PORT"));
+        if (System.getenv("PORT") != null) {
+            port = Integer.parseInt(System.getenv("PORT"));
         } else {
             port = 8080;
         }
